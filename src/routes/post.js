@@ -54,8 +54,21 @@ router.delete("/:id", protect, async (req, res) => {
     }
   });
   
+// get a single post
+router.get("/:id", protect, async (req, res) => {
+    try {
+      const post = await Post.findById(req.params.id).populate("user", "username role");
   
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      const { user, ...postData } = post.toObject(); 
+      res.json(postData);
   
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
   
 
 module.exports = router;
