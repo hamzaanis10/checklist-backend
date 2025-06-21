@@ -38,36 +38,24 @@ router.get("/list", protect, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-  
-  
-  
 
-router.post("/:taskId/items", protect, async (req, res) => {
-  const { title } = req.body;
-  const { taskId } = req.params;
-
-  try {
-    const task = await Task.findById(taskId);
-    if (!task || task.user.toString() !== req.user.id) {
-      return res
-        .status(400)
-        .json({ message: "Task not found or unauthorized" });
+// Delete a post
+router.delete("/:id", protect, async (req, res) => {
+    try {
+      const post = await Post.findByIdAndDelete(req.params.id);
+  
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+  
+      res.status(200).json({ message: "Post deleted successfully" });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
     }
-
-    const newItem = new Item({
-      title,
-      task: taskId,
-    });
-
-    await newItem.save();
-
-    task.items.push(newItem._id);
-    await task.save();
-
-    res.status(201).json(newItem);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+  });
+  
+  
+  
+  
 
 module.exports = router;
