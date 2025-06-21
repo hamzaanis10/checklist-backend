@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const authRoutes = require("./src/routes/auth");
 const cors = require('cors')
-const taskRoutes = require("./src/routes/task");
+const postRoutes = require("./src/routes/post");
 dotenv.config();
 
 const app = express();
@@ -21,7 +21,7 @@ mongoose
 
 // Use routes
 app.use("/api/auth", authRoutes.router);
-app.use("/api/tasks", taskRoutes);
+app.use("/api/posts", postRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;

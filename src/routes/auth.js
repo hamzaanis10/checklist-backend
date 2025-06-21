@@ -61,24 +61,17 @@ router.post("/refresh-token", (req, res) => {
 });
 
 // Middleware to protect routes based on user role
-const protect = (role = "user") => {
-  return async (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(401).json({ message: "Not authorized" });
+const protect = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ message: "Not authorized" });
 
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = decoded;
-
-      if (role && req.user.role !== role) {
-        return res.status(403).json({ message: "Forbidden: Access is denied" });
-      }
-
-      next();
-    } catch (err) {
-      res.status(401).json({ message: "Not authorized" });
-    }
-  };
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(401).json({ message: "Not authorized" });
+  }
 };
 
 module.exports = { router, protect };

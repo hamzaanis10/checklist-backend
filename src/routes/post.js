@@ -1,35 +1,34 @@
 const express = require("express");
-const Task = require("../models/Task");
-const Item = require('../models/Item')
 const { protect } = require("./auth");
+const Post = require("../models/Post");
 const router = express.Router();
 
 // Create a task
 router.post("/", protect, async (req, res) => {
-  const { title } = req.body;
+  const { title, content } = req.body;
 
-  const newTask = new Task({
+  const newPost = new Post({
     title,
+    content,
     user: req.user.id,
   });
 
   try {
-    await newTask.save();
-    res.status(201).json(newTask);
+    await newPost.save();
+    res.status(201).json(newPost);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-router.get("/", protect, async (req, res) => {
-  try {
-    const tasks = await Task.find({ user: req.user.id }).populate("items");
-    res.json(tasks);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
+// router.get("/", protect, async (req, res) => {
+//   try {
+//     const tasks = await Task.find({ user: req.user.id }).populate("items");
+//     res.json(tasks);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// });
 
 router.post("/:taskId/items", protect, async (req, res) => {
   const { title } = req.body;
@@ -58,6 +57,5 @@ router.post("/:taskId/items", protect, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
-
 
 module.exports = router;
